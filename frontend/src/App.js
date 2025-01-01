@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from './components/grid';
 
 const App = () => {
-  const rows = 20; // Number of rows in the grid
-  const cols = 20; // Number of columns in the grid
+  const rows = 20;
+  const cols = 20;
+
+  const createGrid = () => Array.from({ length: rows }, () => Array(cols).fill(0));
+
+  const [grid, setGrid] = useState(createGrid());
+
+  const toggleCell = (row, col) => {
+    const newGrid = [...grid]; // copy grid
+    newGrid[row][col] = grid[row][col] ? 0 : 1;
+    setGrid(newGrid);
+  };
 
   return (
-    <div>
-      <div className="header">
-        <h1>Game of Life Game</h1>
+    <div className="App">
+      <div style={{ textAlign: 'center', width: '100%' }}>
+        <h1 style={{ marginBottom: '20px' }}>Game of Life Game</h1>
       </div>
-      <div className="grid"> 
-        <Grid rows={rows} cols={cols} />
+      <div className="Grid">
+        <Grid grid={grid} toggleCell={toggleCell} />
       </div>
     </div>
   );
