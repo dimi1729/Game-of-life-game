@@ -1,12 +1,39 @@
-import http from 'http';
+import express from 'express';
+import path from 'path';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 const PORT = process.env.PORT;
 
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/html');
-    res.end('<h1>Hello World</h1>');
+const app = express();
+
+app.use(cors());
+
+// Middleware
+app.use(bodyParser.json());
+
+// Serve React app in production
+app.use(express.static(path.join(path.resolve(), 'frontend', 'build')));
+
+// API endpoint for getting config
+app.get('/api/config', (req, res) => {
+  res.json({ port: PORT });
 });
 
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
+// API endpoint
+app.post('/api/process-grid', (req, res) => {
+  try{
+  const grid = req.body.grid;
+  console.log('Received grid:', grid);
+  res.json({ processedGrid: grid });
+  }
+  catch(err){
+    console.log(err);
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
