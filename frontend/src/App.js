@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Grid from './components/grid';
+import LevelSelector from './components/level_select';
 import axios from 'axios';
 
 const App = () => {
@@ -9,6 +10,21 @@ const App = () => {
   const createGrid = () => Array.from({ length: rows }, () => Array(cols).fill(0));
 
   const [grid, setGrid] = useState(createGrid());
+  const [selectedLevel, setSelectedLevel] = useState(null);
+  const [showLevelSelector, setShowLevelSelector] = useState(false);
+
+  const loadLevel = (level) => {
+    // Example logic to load different grids per level (customize per your game logic)
+    const newGrid = createGrid();
+    // Modify `newGrid` based on the level selected
+    setGrid(newGrid);
+  };
+
+  const handleSelectLevel = (level) => {
+    setSelectedLevel(level);
+    loadLevel(level);
+    setShowLevelSelector(false);
+  };
 
   const toggleCell = (row, col) => {
     const newGrid = [...grid]; // copy grid
@@ -49,15 +65,24 @@ const App = () => {
 
   return (
     <div className="App">
-      <div style={{ textAlign: 'center', width: '100%' }}>
-        <h1 style={{ marginBottom: '20px' }}>Game of Life Game</h1>
-      </div>
-      <div className="Grid">
-        <Grid grid={grid} toggleCell={toggleCell} />
-      </div>
-      <div>
-        <button onClick={sendGridToBackend}>send grid to backend (temp)</button>
-      </div>
+      <h1>Game of Life</h1>
+      {selectedLevel ? (
+        <>
+          <h2>Level {selectedLevel}</h2>
+          <Grid grid={grid} toggleCell={toggleCell} />
+        </>
+      ) : (
+        <h2>Select a Level to Start</h2>
+      )}
+
+      <button
+        onClick={() => setShowLevelSelector(!showLevelSelector)}
+        style={{ margin: '20px', padding: '10px 20px' }}
+      >
+        {showLevelSelector ? 'Close Level Selector' : 'Choose Level'}
+      </button>
+
+      {showLevelSelector && <LevelSelector onSelectLevel={handleSelectLevel} />}
     </div>
   );
 };
