@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Grid from './components/grid';
 import LevelSelector from './components/level_select';
 import axios from 'axios';
@@ -12,12 +12,11 @@ const App = () => {
   const [grid, setGrid] = useState(createGrid());
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [showLevelSelector, setShowLevelSelector] = useState(false);
+  const [currentLevel, setCurrentLevel] = useState(1);
 
   const loadLevel = (level) => {
-    // Example logic to load different grids per level (customize per your game logic)
     const newGrid = createGrid();
-    // Modify `newGrid` based on the level selected
-    setGrid(newGrid);
+    setGrid(newGrid); // Adjust `newGrid` based on `level` if needed
   };
 
   const handleSelectLevel = (level) => {
@@ -26,46 +25,46 @@ const App = () => {
     setShowLevelSelector(false);
   };
 
+  const handleNext = () => {
+    if (currentLevel < 20) {
+      setCurrentLevel((prevLevel) => {
+        const newLevel = prevLevel + 1;
+        handleSelectLevel(newLevel);
+        return newLevel;
+      });
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentLevel > 1) {
+      setCurrentLevel((prevLevel) => {
+        const newLevel = prevLevel - 1;
+        handleSelectLevel(newLevel);
+        return newLevel;
+      });
+    }
+  };
+
   const toggleCell = (row, col) => {
-    const newGrid = [...grid]; // copy grid
+    const newGrid = [...grid];
     newGrid[row][col] = grid[row][col] ? 0 : 1;
     setGrid(newGrid);
   };
 
-  /*
-  const [backendUrl, setBackendUrl] = useState('');
-
-  useEffect(() => {
-    console.log('Fetching backend config');
-    const fetchConfig = async () => {
-      try {
-        const response = await axios.get('/api/config');
-        const port = response.data.port;
-        console.log('Backend URL:', `http://localhost:${port}`);
-        setBackendUrl(`http://localhost:${port}`);
-      } catch (error) {
-        console.error('Error fetching backend config:', error);
-      }
-    };
-
-    fetchConfig();
-  }, []);
-  */
-
   const sendGridToBackend = async () => {
     try {
-      const backendUrl = 'http://localhost:5000'; // temporary until I fix the useEffect thing
+      const backendUrl = 'http://localhost:5000';
       const response = await axios.post(`${backendUrl}/api/process-grid`, { grid });
       console.log('Processed grid from backend:', response.data.processedGrid);
     } catch (error) {
       console.error('Error sending grid to backend:', error);
     }
   };
-  
 
   return (
     <div className="App">
       <h1>Game of Life</h1>
+      
       {selectedLevel ? (
         <>
           <h2>Level {selectedLevel}</h2>
@@ -75,16 +74,34 @@ const App = () => {
         <h2>Select a Level to Start</h2>
       )}
 
-      <button
-        onClick={() => setShowLevelSelector(!showLevelSelector)}
-        style={{ margin: '20px', padding: '10px 20px' }}
-      >
-        {showLevelSelector ? 'Close Level Selector' : 'Choose Level'}
-      </button>
+      {/* Show navigation buttons only when the level selector is not open */}
+      {!showLevelSelector && (
+        <div className="level-navigation">
+          <button className="navigation-button" onClick={handlePrevious}>Previous</button>
+          <button
+            className="navigation-button"
+            onClick={() => setShowLevelSelector(!showLevelSelector)}
+          >
+            Choose Level
+          </button>
+          <button className="navigation-button" onClick={handleNext}>Next</button>
+        </div>
+      )}
 
-      {showLevelSelector && <LevelSelector onSelectLevel={handleSelectLevel} />}
+      {/* Render level selector only when toggled open */}
+      {showLevelSelector && (
+        <LevelSelector
+          onSelectLevel={(level) => {
+            setCurrentLevel(level);
+            handleSelectLevel(level);
+          }}
+          currentLevel={currentLevel}
+          setLevel={setCurrentLevel}
+        />
+      )}
     </div>
   );
 };
 
 export default App;
+

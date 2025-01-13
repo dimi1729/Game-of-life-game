@@ -1,20 +1,34 @@
-// Assuming you have a React project setup
-import React, { useState } from 'react';
+import './level_select.css';
 
-const LevelSelector = ({ onSelectLevel }) => {
-    const levels = Array.from({ length: 20 }, (_, index) => index + 1); // Levels 1 to 20
+const LevelSelector = ({ onSelectLevel, currentLevel, setLevel }) => {
+    const levels = Array.from({ length: 20 }, (_, index) => index + 1);
+
+    const handleNext = () => {
+        if (currentLevel < levels.length) setLevel(currentLevel + 1);
+    };
+
+    const handlePrevious = () => {
+        if (currentLevel > 1) setLevel(currentLevel - 1);
+    };
 
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
-            {levels.map((level) => (
-                <button 
-                    key={level} 
-                    onClick={() => onSelectLevel(level)}
-                    style={{ padding: '10px', fontSize: '16px' }}
-                >
-                    Level {level}
-                </button>
-            ))}
+        <div>
+            <div className="level-navigation">
+                <button className="navigation-button" onClick={handlePrevious}>Previous</button>
+                <button className="navigation-button" onClick={() => onSelectLevel(currentLevel)}>Choose Level</button>
+                <button className="navigation-button" onClick={handleNext}>Next</button>
+            </div>
+            <div className="level-selector">
+                {levels.map((level) => (
+                    <button
+                        key={level}
+                        className="level-button"
+                        onClick={() => onSelectLevel(level)}
+                    >
+                        Level {level}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };

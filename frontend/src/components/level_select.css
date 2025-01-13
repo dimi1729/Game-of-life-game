@@ -1,0 +1,51 @@
+/* level_select.css */
+
+.level-selector {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 400px;
+}
+
+.level-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.level-button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.level-button:active {
+    background-color: #d0d0d0;
+}
+
+.level-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.navigation-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.navigation-button:hover {
+    background-color: #e8e8e8;
+}
+
